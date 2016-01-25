@@ -29,10 +29,10 @@ INSERT INTO alunos(nome,nota)VALUES('Rafael Pudim','5');
 
 
 
-CREATE TABLE clientes(
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(255),
-    email VARCHAR(255)
-);
-INSERT INTO clientes(nome,email)VALUES('Rafael Pudim','pudim@pudim.com.br');
-INSERT INTO clientes(nome,email)VALUES('Thiago Tobias','thiagotobias@thiago.com.br');
+# CREATE TABLE clientes(
+#     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+#     nome VARCHAR(255),
+#     email VARCHAR(255)
+# );
+# INSERT INTO clientes(nome,email)VALUES('Rafael Pudim','pudim@pudim.com.br');
+# INSERT INTO clientes(nome,email)VALUES('Thiago Tobias','thiagotobias@thiago.com.br');
