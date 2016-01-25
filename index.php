@@ -5,11 +5,15 @@
     $conexao = new \PDO("mysql:host=localhost;dbname=pdo","root","root");
 
     $query = "SELECT * FROM alunos;";
+    $stmt = $conexao->prepare($query);
+    $stmt->execute();
+    $resultado = $stmt->fetchALL(PDO::FETCH_ASSOC);
+    
     $query_nota = "SELECT * FROM alunos ORDER BY nota DESC,nome ASC LIMIT 3;";
-    $stmt  = $conexao->query($query);
-    $stmt_nota = $conexao->query($query_nota);
-    $resultado = $stmt->fetchall();
-    $result_nota = $stmt_nota->fetchall();
+    $stmt = $conexao->prepare($query_nota);
+    $stmt->execute();
+    $result_nota = $stmt->fetchALL(PDO::FETCH_ASSOC);
+    
     ?>
     <table border="1">
         <tr>
