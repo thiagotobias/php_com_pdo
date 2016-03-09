@@ -10,153 +10,219 @@ try{
 
 $aluno = new Aluno($conexao);
 
-//print_r($_POST);exit;
-
 if ($_POST['btn_acao'] == 'Inserir') {
 	$nomeAluno = $_POST['AlunoName'];
 	$notaAluno = $_POST['AlunoNota'];
 
-	$aluno->setNome("$nomeAluno")
-    	->setNota($notaAluno);
+    if (!empty($notaAluno) and !empty($nomeAluno)) {
+        $aluno->setNome("$nomeAluno")
+              ->setNota($notaAluno);
 
-    $resultado = $aluno->inserir();
+        $resultado = $aluno->inserir();
 
-    if ($resultado == 1) {
-    	$msg = "Aluno: $nomeAluno inserido com sucesso!";
-    	$_POST['btn_acao'] = '';
+        if ($resultado == 1) {
+            header('Location: index.php');
+        }else{
+            $msg_erro = $resultado;
+            echo $msg_erro;
+            ?>
+            <form action="index.php" method="post">
+                <input type="submit" name="btn_acao" value="Voltar"/>
+            </form>
+            <?php
+        }
     }else{
-    	$msg_erro = $resultado;
+        echo "Preencher todos os campos!";
+        ?>
+        <form action="index.php" method="post">
+            <input type="submit" name="btn_acao" value="Voltar"/>
+        </form>
+        <?php
+    }
+}
+
+if ($_POST['btn_acao'] == 'Modificar') {
+    $idAluno = $_POST['id_aluno'];
+    $nomeAluno = $_POST['AlunoName'];
+    $notaAluno = $_POST['AlunoNota'];
+    if (!empty($notaAluno) and !empty($nomeAluno)) {
+        $aluno->setID($idAluno)
+          ->setNome($nomeAluno)
+          ->setNota($notaAluno);
+
+        $resultado = $aluno->alterar();
+
+        if ($resultado == 1) {
+            header('Location: index.php');
+        }else{
+            $msg_erro = $resultado;
+            echo $msg_erro;
+            ?>
+            <form action="index.php" method="post">
+                <input type="submit" name="btn_acao" value="Voltar"/>
+            </form>
+            <?php
+        }
+    }else{
+        echo "Preencher todos os campos!";
+        ?>
+        <form action="index.php" method="post">
+            <input type="submit" name="btn_acao" value="Voltar"/>
+        </form>
+        <?php
     }
 }
 
 if ($_POST['btn_acao'] == 'Remover') {
-	$nomeAluno = $_POST['AlunoName'];
-	$notaAluno = $_POST['AlunoNota'];
-print_r($_POST);exit;
-	$resultado = $aluno->deletar(7);
-	foreach ($aluno->listar("id DESC") as $a) {
-		echo $a['nome']."<br>";    
-	}
+	$idAluno = $_POST['id_aluno'];
 
-	$aluno->setNome("$nomeAluno")
-    	->setNota($notaAluno);
-
-    //$resultado = $aluno->inserir();
-
+	$resultado = $aluno->deletar($idAluno);
     if ($resultado == 1) {
-    	$msg = "Aluno: $nomeAluno inserido com sucesso!";
-    	$_POST['btn_acao'] = '';
+        header('Location: index.php');
     }else{
-    	$msg_erro = $resultado;
-    }
+        echo $resultado;
+    }    
 }
-?>
-<form action="index.php" method="post">
-<?php
+
 if ($_POST['btn_acao'] == 'Listar') { ?>
-<html>
-	<body>
-	    <table border="1">
-	        <tr>
-	            <td colspan="5" >Lista de Alunos</td>	         
-	        </tr>
-	        <tr>
-	        	<td>ID</td>
-	            <td>Nome</td>
-	            <td>Nota</td>
-	            <td colspan="2">Ações</td>
-	        </tr>
-	        	<?php
-	            foreach ($aluno->listar("id DESC") as $a) {								
-					echo "<tr>";
-		            echo "<td>".$a['id']."</td>";
-		            echo "<td>".$a['nome']."</td>";
-		            echo "<td>".$a['nota']."</td>";
-		            echo "<td><input type='submit' name='btn_acao' value='Remover'/> <input type='hidden' name='".$a['id']."' value='".$a['id']."'/> </td>";
-		            echo "<td><input type='submit' name='btn_acao' value='Alterar'/> <input type='hidden' name='".$a['id']."' value='".$a['id']."'/> </td>";
-		            echo "</tr>";
-		        }
-	            ?>
-	        </tr>
-	    </table>     
-	</body>
-	<input type="submit" name="btn_acao" value="Voltar"/>
-</html>
+    <html>
+    	<body>
+    	    <table border="1">
+    	        <tr>
+    	            <td colspan="5" >Lista de Alunos</td>	         
+    	        </tr>
+    	        <tr>
+    	        	<td>ID</td>
+    	            <td>Nome</td>
+    	            <td>Nota</td>    	            
+    	        </tr>
+    	        	<?php
+    	            foreach ($aluno->listar("id DESC") as $a) {
+    					echo "<tr>";                        
+    		            echo "<td>".$a['id']."</td>";
+    		            echo "<td>".$a['nome']."</td>";
+    		            echo "<td>".$a['nota']."</td>";
+    		            echo "</tr>";
+    		        }
+    	            ?>
+    	        </tr>
+    	    </table>     
+    	</body>
+        <form action="index.php" method="post">
+    	<input type="submit" name="btn_acao" value="Voltar"/>
+        </form>
+    </html>
 <?php
 }
-if ($_POST['btn_acao'] == '' OR $_POST['btn_acao'] == 'Voltar') {?>			
+
+if ($_POST['btn_acao'] == 'Remover/Alterar') { ?>
+    <html>
+        <body>
+            <table border="1">
+                <tr>
+                    <td colspan="5" >Lista de Alunos</td>            
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>Nome</td>
+                    <td>Nota</td>
+                    <td colspan="2">Ações</td>
+                </tr>
+                    <?php
+                    foreach ($aluno->listar("id DESC") as $a) {
+                        echo "<tr>";
+                        echo "<form action='index.php' method='post'>";
+                        echo "<td>".$a['id']."</td>";
+                        echo "<td>".$a['nome']."</td>";
+                        echo "<td>".$a['nota']."</td>";
+                        echo "<td><input type='submit' name='btn_acao' value='Remover'/></td>";
+                        echo "<td><input type='submit' name='btn_acao' value='Alterar'/></td>";
+                        echo "<input type='hidden' name='id_aluno' value='".$a['id']."'/>";
+                        echo "</form>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tr>
+            </table>     
+        </body>
+        <form action="index.php" method="post">
+        <input type="submit" name="btn_acao" value="Voltar"/>
+        </form>
+    </html>
+<?php
+}
+if ($_POST['btn_acao'] == 'Alterar') {
+    $idAluno = $_POST['id_aluno'];
+    $resultado = $aluno->find($idAluno);    
+    ?>
+    <form action="index.php" method="post">
+        <table>
+            <tr>
+                <td>Alteração do Aluno</td>
+            </tr>
+            <tr>
+                <td>
+                Nome Aluno:
+                </td>
+                <td>
+                    <input type="text" name="AlunoName" value="<?=$resultado['nome']?>">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                Nota Aluno:
+                </td>
+                <td>
+                    <input type="text" name="AlunoNota" value="<?=$resultado['nota']?>">
+                </td>
+            </tr>
+            <tr>
+                <input type="hidden" name="id_aluno" value="<?=$idAluno?>"/>       
+                <td><input type="submit" name="btn_acao" value="Modificar"/></td>
+                <td><input type="submit" name="btn_acao" value="Voltar"/></td>        
+            </tr>       
+            <td></td>
+        </table>
+    </form>
+<?php
+}
+
+if ($_POST['btn_acao'] == '' OR $_POST['btn_acao'] == 'Voltar') {?>
+    <form action="index.php" method="post">
  		<input type="submit" name="btn_acao" value="Listar"/>
  		<input type="submit" name="btn_acao" value="Cadastrar"/>
- 		<input type="submit" name="btn_acao" value="Remover"/>
+ 		<input type="submit" name="btn_acao" value="Remover/Alterar"/>
+    </form>
 <?php
 }
 if ($_POST['btn_acao'] == 'Cadastrar') {?>
-	<table>
-		<tr>
-			<td>Cadastro de Alunos</td>
-		</tr>
-		<tr>
-			<td>
-			Nome Aluno:
-			</td>
-			<td>
-				<input type="text" name="AlunoName" value="">
-			</td>
-		</tr>
-		<tr>
-			<td>
-			Nota Aluno:
-			</td>
-			<td>
-				<input type="text" name="AlunoNota" value="">
-			</td>
-		</tr>
-		<tr>
-			<td><input type="submit" name="btn_acao" value="Inserir"/></td>
-			<td><input type="submit" name="btn_acao" value="Voltar"/></td>
-		</tr>
-		
-		<td></td>
-	</table>
+    <form action="index.php" method="post">
+    	<table>
+    		<tr>
+    			<td>Cadastro de Alunos</td>
+    		</tr>
+    		<tr>
+    			<td>
+    			Nome Aluno:
+    			</td>
+    			<td>
+    				<input type="text" name="AlunoName" value="">
+    			</td>
+    		</tr>
+    		<tr>
+    			<td>
+    			Nota Aluno:
+    			</td>
+    			<td>
+    				<input type="text" name="AlunoNota" value="">
+    			</td>
+    		</tr>
+    		<tr>        
+    			<td><input type="submit" name="btn_acao" value="Inserir"/></td>
+    			<td><input type="submit" name="btn_acao" value="Voltar"/></td>        
+    		</tr>		
+    		<td></td>
+    	</table>
+    </form>
 <?php
 }
-?>
-</form>
-<?php
-
-/* Inserir 
-$aluno->setNome("Thiago Tobias 2")
-      ->setNota(8)
-;
-
-$resultado = $aluno->inserir();
-echo $resultado;
-*/
-
-/* Listar
-foreach ($aluno->listar("id DESC") as $a) {
-    echo $a['nome']."<br>";    
-}
-*/
-
-/*Alterar
-$aluno->setID(7)
-      ->setNome("Thiago Tobias 2")
-      ->setNota(8)
-;
-
-$resultado = $aluno->alterar();
-echo $resultado;
-*/
-
-/* Remover
-$resultado = $aluno->deletar(7);
-foreach ($aluno->listar("id DESC") as $a) {
-    echo $a['nome']."<br>";    
-}
-*/
-
-/*
-$resultado = $aluno->find(8);
-echo $resultado['nome']." - ".$resultado['nota'];
-*/
